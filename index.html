@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Club Activity</title>
+  <title>Club Activity — Firebase Events</title>
   <style>
+    /* (styles kept same/optimized as before) */
     @import url('https://fonts.googleapis.com/css2?family=Playwrite+Australia+NSW&family=Orbitron:wght@400;700&display=swap');
 
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -16,7 +17,6 @@
       background: black;
     }
 
-    /* Background video */
     #background-video{
       position:fixed;
       right:0;
@@ -27,12 +27,12 @@
       object-fit:cover;
       transition: opacity 0.7s ease-in-out, filter 0.7s ease-in-out, transform 0.5s ease-out;
       pointer-events:none;
+      will-change: transform, filter, opacity;
     }
     #background-video.blur-out { filter: blur(8px); opacity: 0; }
     #background-video.blur-in  { filter: blur(8px); opacity: 1; }
     #background-video.no-blur   { filter: blur(0); }
 
-    /* Global text shadow + static glow on hover */
     h1,h2,h3,p,nav a,button {
       text-shadow: 0 0 6px black, 0 0 12px rgba(0,0,0,0.5);
       transition: transform .28s ease, text-shadow .28s ease;
@@ -42,7 +42,6 @@
       text-shadow: 0 0 8px white, 0 0 15px rgba(255,255,255,0.7);
     }
 
-    /* Fixed navigation */
     nav{
       position:fixed;
       top:20px;
@@ -58,7 +57,6 @@
     }
     nav a { color:white; text-decoration:none; font-size:1.1rem; }
 
-    /* Play music button */
     .audio-btn {
       position: fixed;
       bottom: 20px;
@@ -73,10 +71,8 @@
     }
     .audio-btn:hover{ background-color: rgba(255,255,255,0.12); }
 
-    /* Header / HOME */
     header { padding-top:80px; text-align:center; z-index:6; position:relative; }
     h1 { font-size:3em; text-shadow: 0 0 10px #000, 0 0 15px #222; }
-    /* Make HOME quote more visible */
     header p {
       font-size: 1.3em;
       background-color: rgba(0,0,0,0.5);
@@ -86,13 +82,11 @@
       margin-top: 10px;
     }
 
-    /* Quote small screens tweak */
     @media (max-width:520px){
       header p { font-size: 1em; padding:8px 10px; }
       h1 { font-size:2rem; }
     }
 
-    /* TEAM section */
     #team {
       padding: 100px 20px;
       background-color: rgba(0,0,0,0.6);
@@ -107,7 +101,6 @@
     }
     #team.visible { display:block; opacity:1; transform: translateY(0); }
 
-    /* TEAM grid with CREATOR center - 3x3 */
     .team-grid {
       display:grid;
       grid-template-columns: repeat(3, 240px);
@@ -134,8 +127,10 @@
       object-fit: cover;
       border-radius:50%;
       margin-top:5px;
+      display:block;
+      margin-left:auto;
+      margin-right:auto;
     }
-    /* role-specific borders for images */
     .President img      { border:3px solid gold; }
     .VicePresident img  { border:3px solid lightblue; }
     .Secretary img      { border:3px solid violet; }
@@ -150,7 +145,6 @@
     .team-member p  { font-size:.9em; color:#ddd; margin:0; }
     .team-member.show { opacity:1; transform: translateY(0); }
 
-    /* hover glows for team roles */
     .President:hover      { box-shadow: 0 0 14px gold; transform: translateY(-5px) scale(1.02); }
     .VicePresident:hover  { box-shadow: 0 0 14px lightblue; transform: translateY(-5px) scale(1.02); }
     .Secretary:hover      { box-shadow: 0 0 14px violet; transform: translateY(-5px) scale(1.02); }
@@ -161,7 +155,6 @@
     .Marketing:hover      { box-shadow: 0 0 14px yellow; transform: translateY(-5px) scale(1.02); }
     .Creator:hover        { box-shadow: 0 0 20px red, 0 0 40px red; transform: translateY(-5px) scale(1.03); }
 
-    /* EVENTS section */
     #events {
       padding: 80px 20px;
       background-color: rgba(0,0,0,0.6);
@@ -179,7 +172,6 @@
     .events-header { display:flex; gap:12px; justify-content:center; align-items:center; margin-top:6px; }
     .events-controls { margin-top:18px; display:flex; gap:12px; justify-content:center; }
 
-    /* events grid */
     .events-grid {
       display:flex;
       gap:18px;
@@ -216,7 +208,6 @@
     .event-points { margin-left:12px; color:#ddd; font-size:.9rem; }
     .empty-msg { margin-top:20px; color:#ccc; text-shadow:0 0 6px black; }
 
-    /* ADD EVENT subsection (frosted slide-down) */
     .add-event-area {
       max-width:760px;
       margin:18px auto 0 auto;
@@ -256,7 +247,6 @@
 
     .form-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:12px; }
 
-    /* Clear/Add button styles */
     .btn {
       background: rgba(255,255,255,0.06);
       border:1px solid rgba(255,255,255,0.12);
@@ -269,7 +259,6 @@
     .btn:hover { transform: translateY(-3px); background: rgba(255,255,255,0.10); }
     .btn.primary { background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-color: rgba(255,255,255,0.16); }
 
-    /* small responsive fixes */
     @media (max-width:860px){
       .team-grid { grid-template-columns: repeat(3, 200px); grid-template-rows: repeat(3,200px); gap:16px; }
       .team-member{ width:180px; height:170px; }
@@ -277,42 +266,62 @@
       .events-grid { gap:12px; }
       .event-card { width: 260px; }
     }
+    @media (max-width:1024px){
+      nav { flex-wrap:wrap; gap:10px; padding:8px 12px; }
+      nav a { font-size:1rem; }
+      header h1 { font-size:1.6rem; }
+      header p { font-size:1.05rem; padding:8px 12px; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: auto; gap:16px; }
+      .team-member { width:100%; height:auto; }
+      .team-member img { width:100px; height:100px; }
+      .events-grid { gap:12px; flex-direction:column; }
+      .event-card { width:100%; max-width:360px; }
+      .add-event-area { width:calc(100% - 32px); padding:12px; }
+    }
+    @media (max-width:600px){
+      nav { flex-direction:column; align-items:center; }
+      nav a { font-size:0.95rem; }
+      header h1 { font-size:1.4rem; }
+      header p { font-size:1rem; }
+      .team-grid { grid-template-columns: 1fr; gap:12px; }
+      .team-member img { width:80px; height:80px; }
+      .event-card { width:100%; max-width:320px; }
+      .add-event-area { width:calc(100% - 24px); padding:10px; }
+    }
 
   </style>
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </head>
 <body>
-  <!-- Background video (single element reused & swapped) -->
-  <video id="background-video" autoplay muted>
+  <!-- Background video (reused single element) -->
+  <video id="background-video" autoplay muted playsinline preload="metadata" poster="">
     <source src="BLHOLE.mp4" type="video/mp4">
     Your browser doesn't support video.
   </video>
 
-  <!-- Navigation -->
   <nav>
     <a href="#" id="home-link">HOME</a>
     <a href="#team" id="team-link">TEAM</a>
     <a href="#events" id="events-link">EVENTS</a>
   </nav>
 
-  <!-- Audio -->
-  <audio id="bg-audio" preload="auto" loop>
+  <audio id="bg-audio" preload="metadata" loop>
     <source src="ＮＯＳＴＡＬＧＩＡ.mp3" type="audio/mpeg">
   </audio>
   <button class="audio-btn" id="audio-toggle">Play Music</button>
 
-  <!-- HOME -->
   <header>
     <h1>WELCOME USER</h1>
     <p>"Within the darkness of the void, I forge my own light.”</p>
   </header>
 
-  <!-- TEAM -->
   <section id="team">
     <h2>Our Team</h2>
     <p>Meet the amazing people behind our club activities.</p>
     <div class="team-grid">
-      
-    <div class="team-member President"><img src="M1.jpg"><h3> DISHAAN🐊💨</h3><p>President</p></div>
+      <div class="team-member President"><img src="M1.jpg"><h3> DISHAAN🐊💨</h3><p>President</p></div>
       <div class="team-member VicePresident"><img src="M2.jpg"><h3>VIHAS</h3><p>Vice President</p></div>
       <div class="team-member Secretary"><img src="M3.jpg"><h3>VIJEETH</h3><p>Secretary</p></div>
       <div class="team-member Treasurer"><img src="M4.jpg"><h3>MEGHANA</h3><p>Treasurer</p></div>
@@ -323,19 +332,14 @@
       <div class="team-member Designer"><img src="M6.jpg"><h3>MEDHA.S.NAYAK</h3><p>Designer</p></div>
       <div class="team-member Developer"><img src="M7.jpg"><h3>MUWAZ</h3><p>Developer</p></div>
       <div class="team-member Marketing"><img src="M8.jpg"><h3>RISHITH</h3><p>Marketing</p></div>
-
     </div>
   </section>
 
-  <!-- EVENTS -->
   <section id="events">
     <h2>Upcoming Events</h2>
-    <p class="small-note">Events you add will persist until you clear them.</p>
+    <p class="small-note">Events you add will persist for everyone until you clear them.</p>
 
-    <div class="events-grid" id="events-grid">
-      <!-- Cards added dynamically -->
-    </div>
-
+    <div class="events-grid" id="events-grid"></div>
     <div class="empty-msg" id="events-empty">No upcoming events yet.</div>
 
     <div class="events-controls">
@@ -343,16 +347,13 @@
       <button class="btn" id="clear-events-btn">CLEAR EVENTS</button>
     </div>
 
-    <!-- ADD EVENT slide-down subsection (hidden initially) -->
     <div class="add-event-area hidden" id="add-event-area">
       <h3 style="text-align:left;">Add an Event</h3>
-
       <div class="field-row">
         <div class="field">
           <label class="small-note">Event Image</label>
           <input type="file" accept="image/*" id="event-image-input">
         </div>
-
         <div class="field">
           <label class="small-note">Date & Time / Duration</label>
           <input type="text" id="event-datetime" placeholder="e.g. 2025-08-20 • 6:00pm - 8:00pm">
@@ -387,12 +388,37 @@
   </section>
 
   <script>
+    /******************************
+     * FIREBASE INITIALIZATION
+     * Paste your config object below
+     ******************************/
+    // ======= PASTE FIREBASE CONFIG HERE =======
+    // const firebaseConfig = { apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
+    // ===========================================
+    const firebaseConfig = {
+  apiKey: "AIzaSyB8hNeYCaCUDEb442816H7m5czjU_p7yvk",
+  authDomain: "space-nut.firebaseapp.com",
+  databaseURL: "https://space-nut-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "space-nut",
+  storageBucket: "space-nut.firebasestorage.app",
+  messagingSenderId: "361367330680",
+  appId: "1:361367330680:web:451298e53f06eaac2b328d"
+};
+    // After pasting the firebaseConfig, remove the block comment below.
+    (function(){
+      if (typeof firebase === 'undefined') {
+        console.error('Firebase SDK not loaded — check your internet connection.');
+      }
+    })();
+  </script>
+
+  <script>
     /***********************
      * Core DOM references *
      ***********************/
+    const video = document.getElementById('background-video');
     const bgAudio = document.getElementById('bg-audio');
     const audioToggle = document.getElementById('audio-toggle');
-    const video = document.getElementById('background-video');
 
     const homeLink = document.getElementById('home-link');
     const teamLink = document.getElementById('team-link');
@@ -403,7 +429,6 @@
 
     const teamMembers = document.querySelectorAll('.team-member');
 
-    // Events UI
     const eventsGrid = document.getElementById('events-grid');
     const eventsEmpty = document.getElementById('events-empty');
     const addEventBtn = document.getElementById('add-event-btn');
@@ -420,7 +445,7 @@
     const previewImg = document.getElementById('preview-img');
 
     /***************************
-     * Audio / small utilities *
+     * Audio / utilities *
      ***************************/
     let isPlaying = false;
     audioToggle.addEventListener('click', () => {
@@ -432,7 +457,6 @@
         audioToggle.textContent = 'Play Music';
       }
     });
-    // autoplay on first move (tries)
     document.addEventListener('mousemove', function firstMove(){
       if (!isPlaying) {
         bgAudio.play().then(()=>{ isPlaying = true; audioToggle.textContent = 'Mute Music'; }).catch(()=>{});
@@ -440,322 +464,383 @@
       document.removeEventListener('mousemove', firstMove);
     });
 
-    // parallax small translate for video
+    // parallax (throttled)
+    let targX=0,targY=0,raf=false;
     document.addEventListener('mousemove', (e) => {
-      let x = (e.clientX / window.innerWidth - 0.5) * 5;
-      let y = (e.clientY / window.innerHeight - 0.5) * 5;
-      video.style.transform = `translate(${x}px, ${y}px) scale(1.03)`;
+      targX=(e.clientX/window.innerWidth-0.5)*5;
+      targY=(e.clientY/window.innerHeight-0.5)*5;
+      if(!raf){ raf=true; requestAnimationFrame(()=>{ video.style.transform=`translate(${targX}px, ${targY}px) scale(1.03)`; raf=false; }); }
     });
 
     /******************************
      * Video switching + boomerang
      ******************************/
-    let boomerangInterval = null;
-    let playingForward = true;
+    let boomerangInterval=null;
+    let playingForward=true;
+
+    function safeSetSourceAndLoad(src){
+      const s = video.querySelector('source');
+      s.src = src;
+      video.setAttribute('preload','metadata');
+      video.load();
+    }
 
     function changeVideoSmooth(newSrc, boomerang=false){
-      // clear any boomerang loop
       if (boomerangInterval) { clearInterval(boomerangInterval); boomerangInterval = null; }
-      // progressive blur + fade
       video.classList.add('blur-out');
-      setTimeout(() => {
-        // swap source
-        const source = video.querySelector('source');
-        source.src = newSrc;
-        video.load();
-        video.play().catch(()=>{});
-        // if boomerang => use manual reverse playing method
+      setTimeout(()=>{
+        safeSetSourceAndLoad(newSrc);
+        const onCanPlay = () => { video.play().catch(()=>{}); video.removeEventListener('canplay', onCanPlay); };
+        video.addEventListener('canplay', onCanPlay);
         if (boomerang){
-          // reset state
-          playingForward = true;
-          // watch for approaching end and reverse
-          boomerangInterval = setInterval(() => {
+          playingForward=true;
+          boomerangInterval = setInterval(()=>{
             if (playingForward && video.duration && video.currentTime >= video.duration - 0.04){
-              playingForward = false;
-              video.pause();
-              reversePlay();
+              playingForward=false; video.pause(); reversePlay();
             }
-          }, 50);
+          },50);
         } else {
           video.loop = true;
         }
-        // blur-in then remove blur
         video.classList.remove('blur-out');
         video.classList.add('blur-in');
-        setTimeout(() => {
-          video.classList.remove('blur-in');
-          video.classList.add('no-blur');
-        }, 500);
-      }, 700);
+        setTimeout(()=>{ video.classList.remove('blur-in'); video.classList.add('no-blur'); },500);
+      },700);
     }
-
     function reversePlay(){
-      // step backwards at roughly 30fps speed (matching forward playback)
-      let reverseStep = setInterval(() => {
-        if (video.currentTime <= 0.05){
-          clearInterval(reverseStep);
-          playingForward = true;
-          video.play().catch(()=>{});
-        } else {
-          video.currentTime = Math.max(0, video.currentTime - 0.033);
-        }
-      }, 33);
+      let reverseStep = setInterval(()=>{
+        if (video.currentTime <= 0.05){ clearInterval(reverseStep); playingForward=true; video.play().catch(()=>{}); }
+        else { video.currentTime = Math.max(0, video.currentTime - 0.033); }
+      },33);
     }
 
     /******************************
      * Section navigation behavior
      ******************************/
-    // show only HOME on load
-    function showHomeOnLoad() {
-      // ensure home visible, others hidden
+    function showHomeOnLoad(){
       teamSection.classList.remove('visible'); teamSection.style.display='none';
       eventsSection.classList.remove('visible'); eventsSection.style.display='none';
-      // ensure background is home video
       changeVideoSmooth('BLHOLE.mp4', false);
       window.scrollTo({ top:0, behavior:'instant' });
     }
-    // call on load
     showHomeOnLoad();
 
-    teamLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      // show team section, hide others
+    teamLink.addEventListener('click', (e)=>{ e.preventDefault();
       eventsSection.classList.remove('visible'); eventsSection.style.display='none';
-      teamSection.style.display = 'block';
-      setTimeout(()=> teamSection.classList.add('visible'), 10);
-      // change video to team boomerang
+      teamSection.style.display='block'; setTimeout(()=>teamSection.classList.add('visible'),10);
+      // use your team file name (keeps previous name)
       changeVideoSmooth('PIN.mp4', true);
-      teamSection.scrollIntoView({ behavior: 'smooth' });
+      teamSection.scrollIntoView({ behavior:'smooth' });
     });
 
-    homeLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      // hide others
+    homeLink.addEventListener('click', (e)=>{ e.preventDefault();
       teamSection.classList.remove('visible'); setTimeout(()=>teamSection.style.display='none',500);
       eventsSection.classList.remove('visible'); setTimeout(()=>eventsSection.style.display='none',500);
-      // switch back to home
       changeVideoSmooth('BLHOLE.mp4', false);
       window.scrollTo({ top:0, behavior:'smooth' });
     });
 
-    eventsLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      // hide team, show events
+    eventsLink.addEventListener('click', (e)=>{ e.preventDefault();
       teamSection.classList.remove('visible'); setTimeout(()=>teamSection.style.display='none',500);
-      eventsSection.style.display = 'block';
-      setTimeout(()=> eventsSection.classList.add('visible'), 10);
-      // switch background to EVE.mp4 (normal loop)
+      eventsSection.style.display='block'; setTimeout(()=>eventsSection.classList.add('visible'),10);
       changeVideoSmooth('EVE.mp4', false);
-      eventsSection.scrollIntoView({ behavior: 'smooth' });
-      renderEvents(); // ensure events shown/up-to-date
+      eventsSection.scrollIntoView({ behavior:'smooth' });
+      // start listening to firebase below (if configured)
+      if(window.firebaseConfigured) startFirebaseListeners();
     });
 
     /***********************
      * TEAM reveal helpers
      ***********************/
-    // Show team member boxes staggered when team visible
-    function revealTeamMembers(){
-      teamMembers.forEach((m,i) => {
-        setTimeout(()=> m.classList.add('show'), i*140);
-      });
-    }
-    // Observe team section to reveal members if scrolled into view
+    function revealTeamMembers(){ teamMembers.forEach((m,i)=> setTimeout(()=>m.classList.add('show'), i*140)); }
     const teamObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && entry.target.id === 'team'){
-          revealTeamMembers();
-        }
-      });
+      entries.forEach(entry => { if (entry.isIntersecting && entry.target.id==='team') revealTeamMembers(); });
     }, { threshold: 0.35 });
     teamObserver.observe(teamSection);
 
     /***************************
-     * EVENTS: localStorage API
+     * FIREBASE / EVENTS logic
+     *
+     * Replaces localStorage with realtime DB.
      ***************************/
-    const STORAGE_KEY = 'club_events_v1';
 
-    function readStoredEvents(){
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        return JSON.parse(raw);
-      } catch(err){ console.error('events read error',err); return []; }
-    }
-
-    function saveStoredEvents(arr){
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-      } catch(err){ console.error('events save error',err); }
-    }
-
-    function clearStoredEvents(){
-      localStorage.removeItem(STORAGE_KEY);
-    }
-
-    /***************************
-     * Events UI & rendering
-     ***************************/
+    // helper: render events from an array (same rendering as before)
     const COLOR_PALETTE = ['#ff3860','#ffdd57','#32d296','#7c6cff','#ff7ab6','#00c2ff','#ff8a00','#ffd166'];
-
     function pickRandomColor(){ return COLOR_PALETTE[Math.floor(Math.random()*COLOR_PALETTE.length)]; }
 
-    function renderEvents(){
-      const events = readStoredEvents();
+    function renderEventsFromArray(eventsArr){
       eventsGrid.innerHTML = '';
-      if (!events || events.length === 0){
+      if(!eventsArr || eventsArr.length === 0) {
         eventsEmpty.style.display = 'block';
       } else {
         eventsEmpty.style.display = 'none';
       }
-
-      events.slice(0,3).forEach((ev, idx) => {
+      eventsArr.slice(0,3).forEach(ev => {
         const card = document.createElement('div');
         card.className = 'event-card';
-        // apply border/glow color as inline style for consistency
-        card.style.border = `2px solid ${ev.color}20`;
-        card.style.boxShadow = `0 10px 30px ${ev.color}33`;
-        // content
-        const img = document.createElement('img');
-        img.className = 'event-thumb';
-        img.src = ev.image || '';
-        img.alt = ev.title || 'Event image';
-        // meta + points
-        const meta = document.createElement('div');
-        meta.className = 'event-meta';
-        meta.textContent = ev.datetime || '';
-        const points = document.createElement('ul');
-        points.className = 'event-points';
-        (ev.points || []).forEach(pt => {
-          const li = document.createElement('li');
-          li.textContent = pt || '';
-          points.appendChild(li);
-        });
-
-        card.appendChild(img);
-        card.appendChild(meta);
-        card.appendChild(points);
-
-        // hover-style: change shadow color to a stronger glow on hover
-        card.addEventListener('mouseenter', ()=> {
-          card.style.boxShadow = `0 18px 48px ${ev.color}66, 0 6px 18px rgba(0,0,0,0.6)`;
-          card.style.transform = 'scale(1.035)';
-        });
-        card.addEventListener('mouseleave', ()=> {
-          card.style.boxShadow = `0 10px 30px ${ev.color}33`;
-          card.style.transform = '';
-        });
-
+        card.style.border = `2px solid ${ev.color || '#ffffff'}20`;
+        card.style.boxShadow = `0 10px 30px ${ev.color || '#ffffff'}33`;
+        const img = document.createElement('img'); img.className='event-thumb'; img.src = ev.image || ''; img.alt = 'Event';
+        const meta = document.createElement('div'); meta.className='event-meta'; meta.textContent = ev.datetime || '';
+        const points = document.createElement('ul'); points.className = 'event-points';
+        (ev.points||[]).forEach(pt => { const li = document.createElement('li'); li.textContent = pt||''; points.appendChild(li); });
+        card.appendChild(img); card.appendChild(meta); card.appendChild(points);
+        card.addEventListener('mouseenter', ()=>{ card.style.boxShadow = `0 18px 48px ${ev.color || '#fff'}66, 0 6px 18px rgba(0,0,0,0.6)`; card.style.transform='scale(1.035)'; });
+        card.addEventListener('mouseleave', ()=>{ card.style.boxShadow = `0 10px 30px ${ev.color || '#fff'}33`; card.style.transform=''; });
+        card.addEventListener('click', ()=> showEventDetail(ev));
         eventsGrid.appendChild(card);
       });
 
-      // update Add button disabled state when 3 events exist
-      if (events.length >= 3) {
-        addEventBtn.disabled = true;
-        addEventBtn.classList.add('disabled');
-        addEventBtn.textContent = 'ADD EVENT (max 3)';
-      } else {
-        addEventBtn.disabled = false;
-        addEventBtn.classList.remove('disabled');
-        addEventBtn.textContent = 'ADD EVENT';
+      // update add button state
+      if(eventsArr.length >= 3){ addEventBtn.disabled=true; addEventBtn.textContent='ADD EVENT (max 3)'; }
+      else { addEventBtn.disabled=false; addEventBtn.textContent='ADD EVENT'; }
+    }
+
+    // Firebase-related variables and functions (initialized when config is present)
+    let firebaseApp = null;
+    let firebaseDB = null;
+    let eventsRef = null;
+    let firebaseListenerAttached = false;
+    window.firebaseConfigured = false;
+
+    function configureFirebase(firebaseConfig) {
+      // initialize app & database
+      firebaseApp = firebase.initializeApp(firebaseConfig);
+      firebaseDB = firebase.database();
+      eventsRef = firebaseDB.ref('events');
+      window.firebaseConfigured = true;
+    }
+
+    function startFirebaseListeners(){
+      if (!window.firebaseConfigured || firebaseListenerAttached) return;
+      firebaseListenerAttached = true;
+      // listen to 'events' node changes in realtime
+      eventsRef.on('value', snapshot => {
+        const data = snapshot.val();
+        const arr = [];
+        if (data) {
+          // data is an object { key: { ... } } — maintain insertion order as given by push keys
+          Object.keys(data).forEach(k => {
+            const ev = data[k];
+            arr.push(ev);
+          });
+        }
+        renderEventsFromArray(arr);
+      });
+    }
+
+    // add event: push to DB — but enforce max 3 in DB (atomic-ish with a read)
+    async function pushEventToFirebase(eventObj){
+      if (!window.firebaseConfigured) { alert('Firebase not configured. Paste config in the HTML file.'); return; }
+      try {
+        const snap = await eventsRef.once('value');
+        const current = snap.val();
+        const count = current ? Object.keys(current).length : 0;
+        if (count >= 3) { alert('Maximum of 3 events reached. Clear or remove events to add more.'); return false; }
+        // push new event
+        const newRef = eventsRef.push();
+        await newRef.set(eventObj);
+        return true;
+      } catch(err){
+        console.error('pushEventToFirebase error',err);
+        alert('Failed to save event. See console.');
+        return false;
       }
     }
 
-    // initial render on load
-    renderEvents();
+    // clear all events in DB
+    async function clearAllEventsFromFirebase(){
+      if (!window.firebaseConfigured) { alert('Firebase not configured.'); return; }
+      if (!confirm('Clear all events for everyone? This cannot be undone.')) return;
+      try {
+        await eventsRef.remove();
+      } catch(err){
+        console.error('clearAllEventsFromFirebase error',err);
+        alert('Failed to clear events. See console.');
+      }
+    }
 
     /*************************
-     * ADD EVENT interactions
+     * ADD EVENT interactions (same UI, now using Firebase)
      *************************/
     let currentImageData = null;
-
-    addEventBtn.addEventListener('click', () => {
-      // show slide-down form
-      if (addArea.classList.contains('visible')){
-        // if visible, hide it
-        addArea.classList.remove('visible');
-        setTimeout(()=> addArea.classList.add('hidden'), 450);
-      } else {
-        addArea.classList.remove('hidden');
-        setTimeout(()=> addArea.classList.add('visible'), 10);
-      }
+    addEventBtn.addEventListener('click', ()=>{
+      if (addArea.classList.contains('visible')){ addArea.classList.remove('visible'); setTimeout(()=>addArea.classList.add('hidden'),450); }
+      else { addArea.classList.remove('hidden'); setTimeout(()=>addArea.classList.add('visible'),10); }
     });
-
-    cancelAddBtn.addEventListener('click', () => {
-      hideAddForm();
-    });
-
+    cancelAddBtn.addEventListener('click', ()=> { hideAddForm(); });
     function hideAddForm(){
       addArea.classList.remove('visible');
       setTimeout(()=> {
         addArea.classList.add('hidden');
-        // clear inputs
-        eventImageInput.value = '';
-        eventDatetimeInput.value = '';
-        eventP1.value = ''; eventP2.value = ''; eventP3.value = '';
-        previewImg.src = '';
-        addPreview.style.display = 'none';
-        currentImageData = null;
-      }, 400);
+        eventImageInput.value=''; eventDatetimeInput.value=''; eventP1.value=''; eventP2.value=''; eventP3.value='';
+        previewImg.src=''; addPreview.style.display='none'; currentImageData=null;
+      },400);
     }
-
-    // Image preview and read as dataURL
-    eventImageInput.addEventListener('change', (ev) => {
+    eventImageInput.addEventListener('change', (ev)=>{
       const file = ev.target.files && ev.target.files[0];
-      if (!file) { previewImg.src=''; addPreview.style.display='none'; currentImageData = null; return; }
+      if (!file) { previewImg.src=''; addPreview.style.display='none'; currentImageData=null; return; }
       const reader = new FileReader();
-      reader.onload = (e) => {
-        currentImageData = e.target.result;
-        previewImg.src = currentImageData;
-        addPreview.style.display = 'block';
-      };
+      reader.onload = (e) => { currentImageData = e.target.result; previewImg.src = currentImageData; addPreview.style.display='block'; };
       reader.readAsDataURL(file);
     });
-
-    saveEventBtn.addEventListener('click', () => {
-      // collect fields & validate
+    saveEventBtn.addEventListener('click', async ()=>{
       const datetime = eventDatetimeInput.value.trim();
       const p1 = eventP1.value.trim();
       const p2 = eventP2.value.trim();
       const p3 = eventP3.value.trim();
-
-      const existing = readStoredEvents();
-      if (existing.length >= 3) {
-        alert('Maximum of 3 events reached. Clear or remove events to add more.');
-        return;
-      }
-      if (!currentImageData){
-        // allow empty image? we'll require for better UX
-        if (!confirm('No image uploaded. Continue without an image?')) return;
-      }
-      if (!datetime || !p1){
-        alert('Please provide at least a date/time and the first point.');
-        return;
-      }
-
-      const newEv = {
+      if (!datetime || !p1){ alert('Please provide at least a date/time and the first point.'); return; }
+      const evObj = {
         image: currentImageData || '',
         datetime: datetime,
         points: [p1, p2||'', p3||''],
         color: pickRandomColor()
       };
-      existing.push(newEv);
-      saveStoredEvents(existing);
-      renderEvents();
-      hideAddForm();
+      const ok = await pushEventToFirebase(evObj);
+      if (ok) { hideAddForm(); }
+    });
+    clearEventsBtn.addEventListener('click', ()=> clearAllEventsFromFirebase() );
+
+    /**************************
+     * MAXIMIZED event detail *
+     **************************/
+    const detailContainer = document.createElement('div');
+    detailContainer.id = 'event-detail-view';
+    detailContainer.style.position = 'relative';
+    detailContainer.style.width = '100%';
+    detailContainer.style.maxWidth = '1000px';
+    detailContainer.style.margin = '24px auto';
+    detailContainer.style.background = 'rgba(0,0,0,0.55)';
+    detailContainer.style.borderRadius = '12px';
+    detailContainer.style.padding = '18px';
+    detailContainer.style.display = 'none';
+    detailContainer.style.flexDirection = 'row';
+    detailContainer.style.alignItems = 'stretch';
+    detailContainer.style.gap = '18px';
+    detailContainer.style.boxShadow = '0 10px 40px rgba(0,0,0,0.6)';
+    detailContainer.style.zIndex = 8;
+    detailContainer.innerHTML = `
+      <div id="detail-left" style="flex:1; min-width:240px;">
+        <img id="detail-img" src="" alt="event" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+      </div>
+      <div id="detail-right" style="flex:1; color:#fff; text-align:left;">
+        <h3 id="detail-datetime"></h3>
+        <ul id="detail-points" style="margin-left:18px;"></ul>
+        <div style="margin-top:14px; display:flex; gap:8px; justify-content:flex-end;">
+          <button id="detail-close" class="btn">Close</button>
+        </div>
+      </div>
+    `;
+    const eventsSectionDOM = document.getElementById('events');
+    eventsSectionDOM.insertBefore(detailContainer, eventsSectionDOM.querySelector('.add-event-area'));
+
+    function showEventDetail(ev){
+      eventsGrid.style.display='none'; eventsEmpty.style.display='none'; document.querySelector('.events-controls').style.display='none';
+      document.getElementById('detail-img').src = ev.image || '';
+      document.getElementById('detail-datetime').textContent = ev.datetime || '';
+      const list = document.getElementById('detail-points'); list.innerHTML = '';
+      (ev.points||[]).forEach(pt => { const li=document.createElement('li'); li.textContent = pt||''; list.appendChild(li); });
+      detailContainer.style.display='flex'; detailContainer.style.opacity='0'; detailContainer.style.transform='translateY(12px)';
+      requestAnimationFrame(()=>{ detailContainer.style.transition='opacity .45s ease, transform .45s ease'; detailContainer.style.opacity='1'; detailContainer.style.transform='translateY(0)'; });
+      detailContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    document.addEventListener('click', (e)=>{
+      if (e.target && e.target.id === 'detail-close'){
+        detailContainer.style.transition='opacity .35s ease, transform .35s ease';
+        detailContainer.style.opacity='0'; detailContainer.style.transform='translateY(12px)';
+        setTimeout(()=> { detailContainer.style.display='none'; eventsGrid.style.display=''; document.querySelector('.events-controls').style.display=''; renderFallbackEventsIfNoFirebase(); eventsSection.scrollIntoView({ behavior: 'smooth' }); }, 360);
+      }
     });
 
-    // CLEAR EVENTS
-    clearEventsBtn.addEventListener('click', () => {
-      if (!confirm('Clear all events? This cannot be undone.')) return;
-      clearStoredEvents();
-      renderEvents();
-      // hide form if open
-      hideAddForm();
-    });
+    /*************************
+     * Fallback rendering (if Firebase not configured yet)
+     *************************/
+    // If Firebase not configured, keep using localStorage as fallback for immediate testing.
+    const STORAGE_KEY = 'club_events_v1_fallback';
+    function readStoredEventsFallback(){ try { const raw=localStorage.getItem(STORAGE_KEY); return raw?JSON.parse(raw):[]; } catch(e){ return []; } }
+    function saveStoredEventsFallback(arr){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch(e){} }
+    function renderFallbackEventsIfNoFirebase(){
+      if(window.firebaseConfigured) return;
+      const arr = readStoredEventsFallback();
+      renderEventsFromArray(arr);
+    }
+    // allow adding in fallback mode too
+    function pushEventFallback(evObj){
+      const arr = readStoredEventsFallback();
+      if (arr.length >=3) { alert('Maximum of 3 events reached.'); return; }
+      arr.push(evObj); saveStoredEventsFallback(arr); renderEventsFromArray(arr);
+    }
+    // clear fallback
+    function clearFallback(){ localStorage.removeItem(STORAGE_KEY); renderFallbackEventsIfNoFirebase(); }
 
-    // ensure render when page loads
-    window.addEventListener('load', () => {
-      renderEvents();
+    // if firebase not configured, call fallback render
+    renderFallbackEventsIfNoFirebase();
+
+    /**********************
+     * Expose a helper to paste firebase config at runtime (dev convenience)
+     **********************/
+    window.initFirebaseWithConfig = function(cfg){
+      try {
+        if (!cfg || !cfg.apiKey) { console.error('Invalid config'); return; }
+        configureFirebase(cfg);
+        startFirebaseListeners();
+        // when firebase configured, remove fallback stored data usage and load from DB
+        window.firebaseConfigured = true;
+        // optional: migrate local fallback events up to firebase (prompt)
+        const fallback = readStoredEventsFallback();
+        if (fallback && fallback.length>0){
+          if (confirm('You have locally saved events. Do you want to upload them to Firebase so everyone sees them?')) {
+            (async ()=>{
+              for(const ev of fallback){
+                await pushEventToFirebase(ev);
+              }
+              localStorage.removeItem(STORAGE_KEY);
+            })();
+          }
+        }
+        // re-render from DB will be triggered by listener
+      } catch(err){ console.error('initFirebaseWithConfig error',err); }
+    };
+
+    // If user tries to add when Firebase configured use Firebase push, otherwise fallback
+    (function wireSaveButton(){
+      // override save button behavior depending on firebaseConfigured set at runtime
+      saveEventBtn.removeEventListener('click', ()=>{}); // noop
+      saveEventBtn.addEventListener('click', async ()=>{
+        const datetime = eventDatetimeInput.value.trim();
+        const p1 = eventP1.value.trim();
+        const p2 = eventP2.value.trim();
+        const p3 = eventP3.value.trim();
+        if (!datetime || !p1) { alert('Please provide at least a date/time and the first point.'); return; }
+        const evObj = {
+          image: currentImageData || '',
+          datetime: datetime,
+          points: [p1, p2||'', p3||''],
+          color: pickRandomColor()
+        };
+        if (window.firebaseConfigured && eventsRef) {
+          // try firebase
+          const ok = await pushEventToFirebase(evObj);
+          if (ok) hideAddForm();
+        } else {
+          // fallback local
+          pushEventFallback(evObj);
+          hideAddForm();
+        }
+      });
+    })();
+
+    /**********************
+     * Utility: start firebase automatically if user inserted config inline
+     **********************/
+    window.addEventListener('load', ()=>{
+      // try to read firebaseConfig from global if developer un-commented it inline (they may paste into the inline comment area)
+      try {
+        if (typeof firebaseConfig !== 'undefined' && firebaseConfig) {
+          configureFirebase(firebaseConfig);
+          startFirebaseListeners();
+        }
+      } catch(e){}
     });
 
     /**********************
