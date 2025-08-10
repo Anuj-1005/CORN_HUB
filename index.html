@@ -293,6 +293,42 @@
   <!-- Firebase SDK (compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<style>
+@media (max-width: 768px) {
+    .team-member {
+        width: 120px !important;
+        height: auto !important;
+    }
+    .event-card {
+        width: 90% !important;
+        margin: 10px auto !important;
+    }
+    .quote-text {
+        font-size: 1.2em !important;
+    }
+    button, .btn {
+        padding: 10px 15px !important;
+        font-size: 1em !important;
+    }
+    #eventFormContainer {
+        width: 90% !important;
+        left: 5% !important;
+    }
+}
+@media (max-width: 480px) {
+    .team-member {
+        width: 100px !important;
+    }
+    .quote-text {
+        font-size: 1em !important;
+    }
+    button, .btn {
+        font-size: 0.9em !important;
+    }
+}
+</style>
+
 </head>
 <body>
   <!-- Background video (reused single element) -->
@@ -851,6 +887,75 @@
     });
 
   </script>
+
+<!-- Firebase Integration for Events -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+// Firebase config
+const firebaseConfig = {
+    apiKey: "AIzaSyCk6bcNI7ceCX2bULW4js9xfeL4L09XViQ",
+    authDomain: "corn-nut.firebaseapp.com",
+    databaseURL: "https://corn-nut-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "corn-nut",
+    storageBucket: "corn-nut.firebasestorage.app",
+    messagingSenderId: "343994988936",
+    appId: "1:343994988936:web:1a437754aae276b5ab623d",
+    measurementId: "G-QH5GT5XK6W"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const eventsRef = ref(db, 'events');
+
+// Listen for changes and update UI
+onValue(eventsRef, (snapshot) => {
+    const events = snapshot.val() || {};
+    displayEvents(events);
+});
+
+// Save event to Firebase
+window.saveEventToFirebase = function(eventData) {
+    push(eventsRef, eventData);
+}
+
+// Clear all events from Firebase
+window.clearEventsFromFirebase = function() {
+    remove(eventsRef);
+}
+
+// Override add event button handler
+document.addEventListener('DOMContentLoaded', () => {
+    const addEventForm = document.getElementById('addEventForm');
+    if (addEventForm) {
+        addEventForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const image = document.getElementById('eventImage').value;
+            const point1 = document.getElementById('eventPoint1').value;
+            const point2 = document.getElementById('eventPoint2').value;
+            const point3 = document.getElementById('eventPoint3').value;
+            const date = document.getElementById('eventDate').value;
+            const time = document.getElementById('eventTime').value;
+
+            saveEventToFirebase({ image, points: [point1, point2, point3], date, time });
+            addEventForm.reset();
+            document.getElementById('eventFormContainer').style.display = 'none';
+        });
+    }
+
+    const clearBtn = document.getElementById('clearEventsBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            if (confirm("Clear all events?")) {
+                clearEventsFromFirebase();
+            }
+        });
+    }
+});
+</script>
+
 </body>
 </html>
 
